@@ -1,8 +1,22 @@
 const express = require('express')
 const { graphqlHTTP } = require('express-graphql')
 const schema = require('./schema/schema')
+const mongoose = require('mongoose')
+const dotenv = require('dotenv')
+
+dotenv.config()
 
 const app = express()
+
+const { MONGO_USERNAME, MONGO_PASSWORD } = process.env
+
+mongoose.connect(
+  `mongodb+srv://${MONGO_USERNAME}:${MONGO_PASSWORD}@cluster0.ojdwd.mongodb.net/myFirstDatabase?retryWrites=true&w=majority`
+)
+
+mongoose.connection.once('open', () => {
+  console.log('connected to database')
+})
 
 app.use('/graphql', graphqlHTTP({ schema: schema, graphiql: true }))
 
